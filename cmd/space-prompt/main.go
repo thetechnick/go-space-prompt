@@ -276,13 +276,8 @@ func (m *TookModule) Init(ctx *Context) error {
 	if ctx.Duration < time.Second*2 {
 		return nil
 	}
-	m.output = ` took %B%F{yellow}` + ctx.Duration.String() + `%b%f`
 
-	if ctx.Status == 0 {
-		m.output += "%B%K{black}%F{green} ✓ %k%f%b"
-		return nil
-	}
-	m.output += "%B%K{black}%F{red} ✗ %k%f%b"
+	m.output = ` took %B%F{yellow}` + ctx.Duration.Round(time.Millisecond).String() + `%b%f`
 	return nil
 }
 
@@ -413,9 +408,9 @@ func (m *GitModule) Init(ctx *Context) error {
 		status += GitBehind
 	}
 
-	m.output = `%F{white} on%f%F{magenta}%B  ` + branch
+	m.output = `%F{white} on%f%F{magenta}%B  ` + branch + `%b%f`
 	if status != "" {
-		m.output += ` %F{red}[` + status + `]%b%f`
+		m.output += ` %F{red}[` + status + `]%f`
 	}
 	return nil
 }
