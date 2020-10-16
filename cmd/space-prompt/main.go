@@ -42,6 +42,7 @@ type Context struct {
 }
 
 func main() {
+	// Init
 	ctx := &Context{
 		InSSH: os.Getenv("SSH_CONNECTION") != "",
 	}
@@ -63,6 +64,12 @@ func main() {
 	}
 	ctx.Home = home
 
+	color := os.Getenv("SPACE_PROMPT_COLOR")
+	if color == "" {
+		color = "blue"
+	}
+
+	// Run Modules
 	var (
 		user       = &UserModule{}
 		kubernetes = &KubernetesModule{}
@@ -92,7 +99,7 @@ func main() {
 	fmt.Print("\n" +
 		user.Output() + kubernetes.Output() + directory.Output() +
 		git.Output() + golang.Output() + took.Output() + "\n" +
-		hostname.Output() + status.Output() + "%K{blue}%F{black} %f%k%F{blue} %f")
+		hostname.Output() + status.Output() + "%K{" + color + "}%F{black} %f%k%F{" + color + "} %f")
 }
 
 type module interface {
@@ -157,7 +164,14 @@ func (m *DirectoryModule) Init(ctx *Context) error {
 		return err
 	}
 
-	m.output = `%F{white} in%f %F{cyan}%B` + path.Base(wd) + `%b%f`
+	var dir string
+	if wd == ctx.Home {
+		dir = "~"
+	} else {
+		dir = path.Base(wd)
+	}
+
+	m.output = `%F{white} in%f %F{cyan}%B` + dir + `%b%f`
 	return nil
 }
 
