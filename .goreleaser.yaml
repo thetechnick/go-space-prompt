@@ -3,7 +3,7 @@ before:
 release:
   github:
     owner: thetechnick
-    name: space-prompt
+    name: go-space-prompt
   prerelease: true
 builds:
   - &build-cli
