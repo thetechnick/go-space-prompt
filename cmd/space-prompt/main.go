@@ -121,13 +121,18 @@ func must(err error) {
 type KubernetesModule struct {
 	output string
 }
+
 type kubeconfig struct {
 	CurrentContext string `json:"current-context"`
 }
 
 func (m *KubernetesModule) Init(ctx *Context) error {
-	kubeconfigFile, err := ioutil.ReadFile(
-		path.Join(ctx.Home, ".kube", "config"))
+	kubeconfigPath := path.Join(ctx.Home, ".kube", "config")
+	if kpath, ok := os.LookupEnv("KUBECONFIG"); ok {
+		kubeconfigPath = kpath
+	}
+
+	kubeconfigFile, err := ioutil.ReadFile(kubeconfigPath)
 	if os.IsNotExist(err) {
 		return nil
 	}
